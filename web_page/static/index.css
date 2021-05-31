@@ -1,0 +1,77 @@
+body{
+    background-color: #dfe6e9;
+}
+#header{
+    background-color: #dfe6e9;
+    visibility: hidden;
+}
+.title{
+    text-align: center;
+    margin-top:100px;
+}
+h1{
+    font-weight:800;
+    font-size: 70px;
+    color: #2c3e5036;
+    text-transform: uppercase;
+    background-image: url(https://raw.githubusercontent.com/wook05/wookgit1/main/water.png);
+    background-position:top;
+    -webkit-background-clip:text;
+    animation : water 15s infinite;
+    padding-top:25px;
+}
+@keyframes water {
+    from{
+        background-position: left 0 top 0;
+    }
+    to {
+        background-position: left 1000px top 0;
+    }
+}
+#searchBox{
+    margin-top:50px;
+    font-family: "montserrat", sans-serif;
+    text-align:center;
+}
+#inputBox{
+    background-color: #dfe6e9;
+    height: 40px;
+    display:flex;
+    justify-content: center;
+    text-align: center;
+}
+#inputBox i {
+    background: #b2bec3;
+    width: 40px;
+    line-height: 40px;
+}
+#inp, #btn {
+    border : none;
+    outline: none;
+}
+#inp {
+    width:260px;
+    padding: 0 10px;
+    transition: 0.5s;
+}
+
+#btn{
+    background: #b2bec3;
+    color: white;
+    padding: 0 10px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+a{
+    color:black;
+}
+
+.highlight{
+    background:black;
+}
+
+.sticky{
+    position:sticky;
+    top:0px;
+    z-index:1;
+ }

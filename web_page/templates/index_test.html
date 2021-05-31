@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Main</title>
+	<!-- Font Awesome 5 -->
+	<link href="http://fonts.googleapis.com/earlyaccess/hanna.css" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/earlyaccess/jejumyeongjo.css" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet">
+	<link
+	rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+  	/> 
+	<!-- bootstrap-->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+	<div id="div_load_image">
+		<img src= {{url_for('static/img', filename='google-loader.gif')}} style= "max-width:30%; height:auto;">
+    	</div>
+	
+	<div class="title">
+		<h1>News Domain QA</h1>
+		<!-- <h1>MRC-Based FAQ</h1> -->
+		<h3>궁금한 이슈를 검색해보세요</h3>
+	</div>
+	<div id="searchBox" class="sticky">
+		<div id="inputBox">
+			<i class="fas fa-question" id="question_mark" data-html="true" data-toggle="tooltip" data-placement="bottom" title="[최신 뉴스기반의 질의응답 시스템]<br>K는찾을문서의 개수입니다.<br>다음은 검색의예시입니다.<br>ex1: 코로나 백신 부작용이 있어?<br>ex2: 하이퍼 클로바가 뭐야?"></i> 
+			<i class="fas fa-search"></i>
+			<input id="inp" type="text" name="searchContent" value="" placeholder="Input the Text">
+			<button id="btn" type="button" name="button">Search</button>
+            <div class="selectbox">
+				<label id="label" for="K_select">K</label>
+				<select id="K_select">
+					<option selected>K</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="container" style="margin-top:50px; height:1900px">
+		<div id="accordion">
+			
+		</div>
+	</div>
+</body>
+</html>
+
+<script>
+$(document).ready(function(){
+  
+   $(document).ready(function(){ $('[data-toggle="tooltip"]').tooltip(); });
+
+    window.onload = function () { 
+	$("#div_load_image").hide();
+    }
+    
+    var selectTarget = $('.selectbox select');
+    var select_name = 3  // initialize as 5
+
+    selectTarget.change(function(){ 
+        select_name = $(this).children('option:selected').text(); 
+	if(select_name == 'K'){
+	    select_name = 3;	
+	}
+	$(this).siblings('label').text(select_name);
+    });
+
+    $("#btn").click(function(){
+        $("#accordion").empty();
+		var text = $("#inp").val();
+		$("#div_load_image").show();
+        //console.log("hihi");
+        //$("#accordion").empty();
+		move();
+        search(text, select_name);
+	//search(text);
+    });
+    $("#inp").keydown(function(key){
+        if(key.keyCode == 13) {
+        $("#accordion").empty();
+	    var text = $("#inp").val();
+		$("#div_load_image").show();
+		//$("#accordion").empty();
+        move();
+        search(text, select_name);
+            //search(text);
+	}
+    });
+    
+    function move(){
+        var offset = $('#accordion').offset(); 
+        console.log(offset);
+        offset.top = 280;
+        console.log(offset);
+        $('html').animate({scrollTop : offset.top}, 400);
+        loading();
+    }
+
+    function loading(){
+
+    }
+
+    function search(text, select_name){
+        $.ajax({
+            url: '/search',
+            dataType : 'json', 
+            data: {
+                word: text,
+                K: select_name,
+                num: '123'
+            },
+            success:function(result){
+                var count = 1
+                var text = "";
+                $(result).each(function(index, word){
+                    word.content = word.content.replaceAll(word.highlight,`<mark>`+word.highlight+`</mark>`);
+                    if(count == 1){         
+                        text += `
+                        <div class="card">
+                        <a class="card-link" data-toggle="collapse" href="#collapse${count}">
+                            <div class="card-header">
+                                ${word.title}
+                                <span style="float:right"><i class="fas fa-angle-double-down"></i></span>
+                            </div>
+                        </a>    
+                        <div id="collapse${count++}" class="collapse" data-parent="#accordion">
+                          <div class="card-body">
+                            ~${word.content}~
+			    <br>
+		 	    <br>
+				    <A href= ${word.url} target="blank" >(${word.news} : ${word.url})</A>
+			    </br>
+		            </br>    
+                          </div>
+                        </div>
+                      </div>
+                    `
+                    } else {   
+                        text += `
+                        <div class="card">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#collapse${count}">
+                                <div class="card-header">
+                                ${word.title}
+                                <span style="float:right"><i class="fas fa-angle-double-down"></i></span>
+                                </div>
+                            </a>
+                            <div id="collapse${count++}" class="collapse" data-parent="#accordion">
+                                <div class="card-body">
+                                    ~${word.content}~
+				    <br>
+				    <br>
+				    <A href= ${word.url} target="blank">(${word.news} : ${word.url})</A>
+				    </br>
+			    	    </br>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                    }
+                });
+                $("#accordion").html(text);
+				$("#div_load_image").hide();
+            }
+        });
+    }
+});
+</script>
+
+<style>
+body{
+    background-color: #dfe6e9;
+}
+#header{
+    background-color: #dfe6e9;
+    visibility: hidden;
+}
+.title{
+    text-align: center;
+    margin-top:100px;
+}
+h1{
+    font-weight:800;
+    font-size: 70px;
+    color: #2c3e5036;
+    text-transform: uppercase;
+    background-image: url(https://raw.githubusercontent.com/wook05/wookgit1/main/water.png);
+    background-position:top;
+    -webkit-background-clip:text;
+    animation : water 15s infinite;
+    padding-top:25px;
+}
+@keyframes water {
+    from{
+        background-position: left 0 top 0;
+    }
+    to {
+        background-position: left 1000px top 0;
+    }
+}
+#searchBox{
+    margin-top:50px;
+    font-family: "montserrat", sans-serif;
+    text-align:center;
+}
+#inputBox{
+    background-color: #dfe6e9;
+    height: 40px;
+    display:flex;
+    justify-content: center;
+    text-align: center;
+}
+#inputBox i {
+    background: #b2bec3;
+    width: 40px;
+    line-height: 40px;
+}
+#inp, #btn {
+    border : none;
+    outline: none;
+}
+#inp {
+    width:230px;
+    padding: 0 10px;
+    transition: 0.5s;
+}
+
+#btn{
+    background: #b2bec3;
+    color: white;
+    padding: 0 10px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+a{
+    color:black;
+}
+
+.highlight{
+    background:black;
+}
+
+.sticky{
+    position:sticky;
+    top:0px;
+    z-index:1;
+ }
+
+.selectbox { 
+    position: sticky; /*relative*;*/ 
+    width: 55px; 
+    border: 1px solid #999;
+    z-index: 1; 
+} 
+/*
+#label{
+    top:20%;
+    padding: 0 10px;
+    color: red;
+}
+*/
+.selectbox:before { 
+    content: "";
+    position: absolute; 
+    top: 50%;
+    right: 15px; 
+    width: 0; 
+    height: 0; 
+    margin-top: -1px; 
+    border-left: 5px solid transparent; 
+    border-right: 5px solid transparent; 
+    border-top: 5px solid #333; 
+} 
+
+.selectbox label { 
+    position: absolute; 
+    top: -4px; 
+    left: 5px; 
+    padding: .8em .5em; 
+    color: #999; 
+    z-index: -1; 
+} 
+
+.selectbox select { 
+    width: 100%; 
+    height: auto; 
+    line-height: normal; 
+    font-family: inherit; 
+    padding: .8em .5em; 
+    border: 0; opacity: 0;  
+    filter:alpha(opacity=0); 
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    appearance: none; 
+}
+
+
+#div_load_image{
+    position: absolute;
+    width: 100%;
+    height: 0px;   
+    top: 50%;
+    left: 0px;
+    display: block;  
+    opacity: 0.7; 
+    text-align: center; 
+    z-index:9999; 
+    margin:auto;
+    padding:0;
+    background:#f0f0f0;  
+}
+
+a:visited{ color:blue;}
+
+h3{
+	font-family: 'Hanna', sans-serif;
+}
+
+.card-header{
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+.card-body{
+	font-family: 'Jeju Myeongjo', serif;
+}
+
+div.tooltip {
+    
+    position: relative;
+    /* white-space:pre; */
+    white-space: nowrap;
+	display: inline-block; 
+	border-bottom: dotted 1px black;
+    /* text-decoration: underline dotted black; */
+    max-width: 215px;
+    font-size: 0.8em;
+    padding: 0px;
+    border: 1px solid;
+    border-radius: 5px;
+    width: 215px; 
+    background-color: black;
+    text-align: left;
+}
+#question_mark{
+   margin-right: 1px;
+}
+
+</style>
