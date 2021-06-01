@@ -10,7 +10,7 @@ from src import (
 
 config_dir = 'config'
 task = 'news'
-config_file = 'koelectra-small-v3.json'
+config_file = 'deploy_model.json'
 
 with open(os.path.join(config_dir, task, config_file)) as f:
     args = AttrDict(json.load(f))
