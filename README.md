@@ -104,7 +104,7 @@ bentoml serve DualMRCModel:latest
 <p align="center">
     <img src="https://user-images.githubusercontent.com/48018483/120331095-637a4e00-c328-11eb-8f75-c286c63a6ecf.png" />  
 </p>
-<br><br>
+<br>
 
 #### **Hard 필터링**
 <p align="center">
