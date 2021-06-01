@@ -72,6 +72,7 @@ class SingleMRCModel(BentoService):
         """
         model = self.artifacts.model
         model.to(args.device)
+        
         # 데이터 불러오기
         with open(os.path.join(args.data_dir, args.task, args.predict_file), 'w') as f:
             json.dump(input_data, f)
@@ -167,4 +168,12 @@ class SingleMRCModel(BentoService):
             tokenizer,
         )
 
-        return predictions
+        with open(output_nbest_file, "r") as f:
+            nbest = json.load(f)
+
+        predictions_with_probability = {}
+
+        for id in predictions.keys():
+            predictions_with_probability[id] = (nbest[id][0]['probability'], predictions[id])
+
+        return predictions_with_probability
