@@ -116,10 +116,15 @@ bentoml serve DualMRCModel:latest
 - 추론 효율 향상과 정답이 없는 문단을 독해하여 발생할 수 있는 Negative bias를 줄이고자 함.
 - 하지만 필터링 비율에 따라서 성능저하 발생
 - 따라서, Positive example의 추론여부가 중요한 기계독해에선 Soft필터링 방식이 적절함을 보임
+<<<<<<< HEAD
 <br>
 <p align="center">
     <img src="https://user-images.githubusercontent.com/48018483/120331699-03d07280-c329-11eb-9133-7f536130b688.png" />  
 </p>
+=======
+<br>![image](https://user-images.githubusercontent.com/48018483/120331699-03d07280-c329-11eb-9133-7f536130b688.png)
+
+>>>>>>> 2317d0e137e1d25027ee78b55df4e5682a391295
 
 
 
