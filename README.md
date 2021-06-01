@@ -1,4 +1,3 @@
-
 # 뉴스 도메인 질의응답 시스템
 본 프로젝트는 `뉴스기사에 대한 질의응답 서비스` 를 제공하기 위해서 진행한 프로젝트입니다. 약 3개월간 ( 21. 03 ~ 21. 05 ) 진행하였으며 Transformer 아키텍쳐 기반의 Encoder를 사용하여 한국어 질의응답 데이터셋으로 fine-tuning을 수행한 모델을 기반으로 최신 뉴스 기사를 기반으로 하여 질의응답 서비스를 제공합니다.
 
@@ -93,21 +92,34 @@ bentoml serve DualMRCModel:latest
 - 변환한 코쿼드의 데브셋 약 13만개를 평가 데이터로 사용
 - Soft/Hard 필터링 모델에 대한 평가 수행
 #### **Soft 필터링**
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/48018483/120335902-d38ad300-c32c-11eb-8cf8-ae105801d034.png" />  
+</p>
+
 - Retrospective Reader 구조를 한국어 기계독해에 적용
 - SketchReading, IntensiveReading의 정보를 합산하여 정답을 검증
 - 가중치 변수는 추론 정보의 조합 비율을 말함
-- 아래와 같이 두 가지 모듈의 정보를 적절히 반영했을때 NoAnswer 분류 성능이 더 좋음을 알 수 있었음 
-<br>![image](https://user-images.githubusercontent.com/48018483/120331095-637a4e00-c328-11eb-8f75-c286c63a6ecf.png)
+- 아래와 같이 두 가지 모듈의 정보를 적절히 반영했을때 NoAnswer 분류 성능이 더 좋음을 알 수 있었음
+
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/48018483/120331095-637a4e00-c328-11eb-8f75-c286c63a6ecf.png" />  
+</p>
+<br><br>
 
 #### **Hard 필터링**
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/48018483/120336511-63308180-c32d-11eb-9fc0-a91be8ce3740.png" />  
+</p>
+
 - 문단별 선별적으로 독해하는 상황을 가정함
 - SketchReading에서 정답이 없다고 판별한 경우 과감히 Skip 
 - 추론 효율 향상과 정답이 없는 문단을 독해하여 발생할 수 있는 Negative bias를 줄이고자 함.
 - 하지만 필터링 비율에 따라서 성능저하 발생
 - 따라서, Positive example의 추론여부가 중요한 기계독해에선 Soft필터링 방식이 적절함을 보임
 <br>
-![image](https://user-images.githubusercontent.com/48018483/120331699-03d07280-c329-11eb-9133-7f536130b688.png)
-
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/48018483/120331699-03d07280-c329-11eb-9133-7f536130b688.png" />  
+</p>
 
 
 
