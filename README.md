@@ -13,8 +13,23 @@
 <br><br>
 
 ## **웹 데모 페이지**
+General한 한국어 데이터셋을 기반으로 학습한 한국어 기계독해 모델에 뉴스 도메인에 적합한 추가적으로 학습한 모델을 서빙하여 실시간 질의응답 서비스를 제공한다
+### **메인 검색 페이지**
+![image](https://user-images.githubusercontent.com/48018483/120329480-dc78a600-c326-11eb-8937-a2927a0d5594.png)
+- K 지정: 관련도 최상위 K개의 문서를 리턴
+- 질의 입력: 질문을 입력받음
+- 검색: 검색버튼을 누르면 로딩바 재생, 검색 -> 기계독해 수행
+### **질의 결과**
+![image](https://user-images.githubusercontent.com/48018483/120330322-a982e200-c327-11eb-9f2f-03acd1118aa3.png)
+- 기계독해 결과 출력: 정답이 있다고 판단한 문서에 대해서 결과출력
+- 확률값을 기준으로 소팅: 확률값이 가장 높은 결과를 맨 위에 보여줌
 
-작성중
+### **문서 상세 보기**
+![image](https://user-images.githubusercontent.com/48018483/120332079-5a3db100-c329-11eb-8726-c5c7133abd5e.png)
+- 문맥 보기: 정답주변의 문맥을 볼 수 있음
+- 정답 하이라이팅: 정답을 보기 쉽게 하이라이팅함
+- 원본 뉴스기사 하이퍼링크: 기사 원문을 바로 찾아갈 수 있도록 제공
+
 
 <br>
 
@@ -74,12 +89,33 @@ bentoml serve DualMRCModel:latest
 - 파라미터는 KoELECTRA-small-v3 모델의 configuration을 그대로 사용
 
 ## **모델 평가**
+### General
+- 변환한 코쿼드의 데브셋 약 13만개를 평가 데이터로 사용
+- Soft/Hard 필터링 모델에 대한 평가 수행
+#### **Soft 필터링**
+- Retrospective Reader 구조를 한국어 기계독해에 적용
+- SketchReading, IntensiveReading의 정보를 합산하여 정답을 검증
+- 가중치 변수는 추론 정보의 조합 비율을 말함
+- 아래와 같이 두 가지 모듈의 정보를 적절히 반영했을때 NoAnswer 분류 성능이 더 좋음을 알 수 있었음 
+<br>![image](https://user-images.githubusercontent.com/48018483/120331095-637a4e00-c328-11eb-8f75-c286c63a6ecf.png)
+
+#### **Hard 필터링**
+- 문단별 선별적으로 독해하는 상황을 가정함
+- SketchReading에서 정답이 없다고 판별한 경우 과감히 Skip 
+- 추론 효율 향상과 정답이 없는 문단을 독해하여 발생할 수 있는 Negative bias를 줄이고자 함.
+- 하지만 필터링 비율에 따라서 성능저하 발생
+- 따라서, Positive example의 추론여부가 중요한 기계독해에선 Soft필터링 방식이 적절함을 보임
+<br>
+![image](https://user-images.githubusercontent.com/48018483/120331699-03d07280-c329-11eb-9133-7f536130b688.png)
+
+
+
+
+
+### Domain-Specific
 - AIHUB 기계독해 데이터셋 35만개의 일부를(20%) 평가 데이터로 사용
 - 단일 모델에 대한 평가만 수행
 - NoAnswer 분류시 사용하는 임계값을 변경하며 실험
-
-</br>
-</br>
 
 |                        | **Total**<br/>(EM) | **Total**<br/>(F1) |  **정답이 있는 경우**<br/>(F1) | **정답이 없는 경우**<br/>(acc) | 
 | :--------------------- | :----------------: | :--------------------: | :----------------: | :--------------------: |
