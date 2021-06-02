@@ -29,7 +29,7 @@
     "max_grad_norm": 1.0,
     "no_cuda": false,
     "model_type": "koelectra-small-v3",
-    "model_name_or_path": "./model/SketchReadingModule_trained_korquad2.0_x3",
+    "model_name_or_path": "./model/SketchReadingModule_trained_korquad2.0_x3_newsQA_x7",
     "output_dir": "temp",
     "seed": 42,
     "train_batch_size": 32,
